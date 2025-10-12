@@ -1,13 +1,16 @@
 ﻿#include <iostream>
 #include <vector>
+#include <deque>
+#include <string>
 #include <cstdlib>
+#include <algorithm>
 //размерности поля
 const int rows = 5;
 const int cols = 5;
 const int rowsWithBorders = rows + 2;
 const int colsWithBorders = cols + 2;
 //символы
-const char borderChar = '+';
+const char borderChar = '#';
 const char snakeHead = '@';
 const char snakeBody = '#';
 //параметры змейки
@@ -27,58 +30,77 @@ struct apple {
 };
 
 using namespace std;
+using Grid = vector<vector<char>>;
 
 //создание поля
-void fillGrid(vector<vector<char>>& grid) {
-    grid.clear();
-    grid.assign(rowsWithBorders, vector<char>(colsWithBorders, ' '));
-    for (int y = 0; y < rowsWithBorders; y++) {
-        for (int x = 0; x < colsWithBorders; x++) {
-            if (y == 0 || y == rowsWithBorders - 1 || x == 0 || x == colsWithBorders - 1) grid[y][x] = borderChar;
-        }
+Grid createGrid()
+{
+    Grid grid(rowsWithBorders, vector<char>(colsWithBorders, ' '));
+
+    fill(grid.front().begin(), grid.front().end(), borderChar);
+    fill(grid.back().begin(), grid.back().end(), borderChar);
+
+    for (auto it = grid.begin() + 1; it != grid.end() - 1; ++it) {
+        it->front() = borderChar;
+        it->back() = borderChar;
     }
+
+    return grid;
 }
 
+
+string row2Str(const vector<char>& row) {
+    return(string(row.data(), row.size()));
+}
+
+vector<string> grid2Strings(const Grid& grid) {
+    vector<string> strings;
+    strings.reserve(grid.size());
+    transform(grid.begin(), grid.end(), back_inserter(strings), row2Str);
+    return strings;
+}
 //вывод поля на экран
 void printGrid(const vector<vector<char>>& grid) {
-    for (int y = 0; y < rowsWithBorders; y++) {
-        for (int x = 0; x < colsWithBorders; ++x) {
-            cout << grid[y][x] << ' ';
-        }
-        cout << '\n';
+    vector<string> strings = grid2Strings(grid);
+    for (const auto& str : strings) {
+        cout << str << '\n';
     }
 }
 
 //создание змейки
-void spawnSnake(vector<vector<char>>& grid, vector<snake>& snake) {
+deque<snake> сreateSnake() {
     int x = colsWithBorders / 2;
     int y = rowsWithBorders / 2;
-    snake[snakeHeadInd] = { x, y++, 'S', snakeHead };
-    snake[snakeHeadInd + 1] = { x, y, 'S', snakeBody };
-    for (int i = 0; i < snakeStartSize; i++) {
-        grid[snake[i].x][snake[i].y] = snake[i].type;
-    }
+    deque<snake> snakeDeque;
+    snakeDeque.push_back({ x, y++, 'S', snakeHead });
+    snakeDeque.push_back({ x, y, 'S', snakeBody });
+    return snakeDeque;
 }
 
 
 //движение змейки
-void controlSnake(vector<vector<char>>& grid, vector<snake>& snake) {
+void controlSnake(vector<vector<char>>& grid, deque<snake>& snake) 
+{
     bool gameOver = false;
     char action;
     while (!gameOver) {
-        cin >> action;
+        cin.get(action);
         int oldX = snake[snakeHeadInd].x;
         int oldY = snake[snakeHeadInd].y;
         switch (action) {
+        case 'w':
         case 'W':
             snake[snakeHeadInd].x++;
             break;
+        case 'a':
         case 'A':
             snake[snakeHeadInd].y--;
             break;
+        case 's':
         case 'S':
             snake[snakeHeadInd].x--;
             break;
+        case 'd':
         case 'D':
             snake[snakeHeadInd].y++;
             break;
@@ -93,15 +115,14 @@ void controlSnake(vector<vector<char>>& grid, vector<snake>& snake) {
     }
 }
 
-int main() {
-    vector<vector<char>> grid;
-    vector<snake> snake{ snakeStartSize };
+int main() 
+{
     cout << "PRESS ANY BUTTON TO START PLAY SNAKE!" << '\n';
     cin.get();
-    cout.clear();
-    fillGrid(grid);
-    spawnSnake(grid, snake);
+    system("cls");
+    vector<vector<char>> grid = createGrid();
+    //deque<snake> snake = spawnSnake();
     printGrid(grid);
-    controlSnake(grid, snake);
+    //controlSnake(grid, snake);
     return 0;
 }
