@@ -10,8 +10,8 @@
 #include <random>
 
 //размерности поля
-const int ROWS = 10;
-const int COLS = 10;
+const int ROWS = 5;
+const int COLS = 5;
 const int ROWS_WITH_BORDERS = ROWS + 2;
 const int COLS_WITH_BORDERS = COLS + 2;
 //спец символы
@@ -29,7 +29,11 @@ const char DOWN = 's';
 const char RIGHT = 'd';
 const char QUIT = 'q';
 //время движения
-const auto MOVE_INTERVAL = std::chrono::milliseconds(100);
+const auto MOVE_INTERVAL = std::chrono::milliseconds(500);
+// очистка экрана
+const std::string CLEAR_SCREEN = "\033[H";
+//счет для выигрыша
+const int WIN_SCORE = ROWS * COLS;
 
 struct SnakePart {
     int x;
@@ -65,6 +69,7 @@ Grid CreateGrid()
 
 //вывод поля на экран
 void PrintGrid(const std::vector<std::vector<char>>& grid) {
+    std::cout << CLEAR_SCREEN;
     for (const auto& row : grid) {
         std::cout.write(row.data(), row.size());
         std::cout << '\n';
@@ -101,8 +106,8 @@ void DrawSnakeOnGrid(Grid& grid, const Snake& snake) {
 
 //движение змейки
 void MoveSnake(Snake& snake) {
-    char dir = snake[SNAKE_HEAD_IND].dir;
     SnakePart head = snake.front();
+    char dir = head.dir;
 
     switch (dir) {
         case UP: head.y--; break;
@@ -142,10 +147,19 @@ bool HandleInput(Snake& snake) {
 
 
 //проверка положения змеи
-bool ValidPosition(const SnakePart& snakeHead) {
+bool ValidPosition(const Snake& snake) {
+    SnakePart snakeHead = snake[SNAKE_HEAD_IND];
+    Snake snakeBody = snake;
+    snakeBody.pop_front();
+
+    //проверка на врезание в стену
     if (snakeHead.x <= 0 || snakeHead.x >= COLS_WITH_BORDERS - 1 ||
         snakeHead.y <= 0 || snakeHead.y >= ROWS_WITH_BORDERS - 1
         ) return false;
+    //проверка на врезание в саму себя
+    for (SnakePart part : snakeBody) {
+        if (part.x == snakeHead.x && part.y == snakeHead.y) return false;
+    }
     return true;
 }
 
@@ -153,8 +167,8 @@ bool ValidPosition(const SnakePart& snakeHead) {
 Apple SpawnApple(const Snake& snake) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> xDist(1, COLS_WITH_BORDERS - 1);
-    std::uniform_int_distribution<> yDist(1, ROWS_WITH_BORDERS - 1);
+    std::uniform_int_distribution<> xDist(1, COLS_WITH_BORDERS - 2);
+    std::uniform_int_distribution<> yDist(1, ROWS_WITH_BORDERS - 2);
 
     Apple newApple;
     newApple.x = xDist(gen);
@@ -168,39 +182,66 @@ Apple SpawnApple(const Snake& snake) {
     return newApple;
 }
 
+
+bool IsAppleEaten(const SnakePart& head, const Apple& apple) {
+    return (head.x == apple.x && head.y == apple.y);
+}
+
 //отрисовка яблока
 void DrawAppleOnGrid(Grid& grid, const Apple& apple) {
     grid[apple.y][apple.x] = APPLE_CHAR;
 }
 
+Snake IncreaseSnake(const Snake& snake) {
+    Snake newSnake = snake;
+    newSnake.push_back(snake.back());
+    return newSnake;
+}
 
 void RenderGame() {
+    int scoreCounter = SNAKE_START_SIZE;
     Snake snake = SpawnSnake();
-    Apple apple;
+    Apple apple = SpawnApple(snake);
     Grid grid;
     auto lastMoveTime = std::chrono::steady_clock::now();
 
-    while (true) {
-        if (HandleInput(snake)) return;
+    while (scoreCounter != WIN_SCORE) {
+        if (HandleInput(snake)) {
+            std::cout << "PLAYER QUIT GAME" << '\n';
+            return;
+        }
         auto now = std::chrono::steady_clock::now();
         if (now - lastMoveTime >= MOVE_INTERVAL) {
             MoveSnake(snake);
-            if (!ValidPosition(snake[SNAKE_HEAD_IND])) return;
+            if (!ValidPosition(snake)) {
+                std::cout << "GAME OVER" << '\n';
+                return;
+            }
             lastMoveTime = now;
         }
-        system("cls");
-        //apple = SpawnApple(snake);
+        
+        if (IsAppleEaten(snake[SNAKE_HEAD_IND], apple)) 
+        {
+            apple = SpawnApple(snake);
+            snake = IncreaseSnake(snake);
+            scoreCounter++;
+        }
         grid = CreateGrid();
-        //DrawAppleOnGrid(grid, apple);
+        DrawAppleOnGrid(grid, apple);
         DrawSnakeOnGrid(grid, snake);
         PrintGrid(grid);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+    std::cout << "YOU WON! SNAKE EAT ALL APPLES!" << '\n';
+    return;
 }
 
 int main() 
 {
     std::cout << "PRESS ANY BUTTON TO START PLAY SNAKE!" << '\n';
+    std::cout << "CHOOSE LEVEL OF DIFICULT:" << '\n';
+    std::cout << "1 - WORM - EASY LEVEL" << '\n';
+    std::cout << "2 - SOLID SNAKE - NORMAL LEVEL" << '\n';
     std::cin.get();
     system("cls");
     RenderGame();
