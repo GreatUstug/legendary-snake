@@ -124,6 +124,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SnakePP.cpp" />
+    <ClCompile Include="Src\Apple\Apple.cpp" />
+    <ClCompile Include="Src\Game\Game.cpp" />
+    <ClCompile Include="Src\Grid\Grid.cpp" />
+    <ClCompile Include="Src\Snake\Snake.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\Constants.h" />
+    <ClInclude Include="Src\Apple\Apple.h" />
+    <ClInclude Include="Src\Game\Game.h" />
+    <ClInclude Include="Src\Grid\Grid.h" />
+    <ClInclude Include="Src\Snake\Snake.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
