@@ -123,6 +123,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Src\InputHandler\InputHandler.cpp" />
+    <ClCompile Include="Src\AppleGenerator\AppleGenerator.cpp" />
+    <ClCompile Include="Src\SnakePart\SnakePart.cpp" />
     <ClCompile Include="SnakePP.cpp" />
     <ClCompile Include="Src\Apple\Apple.cpp" />
     <ClCompile Include="Src\Game\Game.cpp" />
@@ -130,7 +133,10 @@
     <ClCompile Include="Src\Snake\Snake.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\InputHandler\InputHandler.h" />
+    <ClInclude Include="Src\AppleGenerator\AppleGenerator.h" />
     <ClInclude Include="Include\Constants.h" />
+    <ClInclude Include="Src\SnakePart\SnakePart.h" />
     <ClInclude Include="Src\Apple\Apple.h" />
     <ClInclude Include="Src\Game\Game.h" />
     <ClInclude Include="Src\Grid\Grid.h" />

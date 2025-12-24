@@ -1,7 +1,8 @@
 #ifndef APPLE_H
 #define APPLE_H
 
-class Apple {
+class Apple 
+{
 private:
     int x;
     int y;
@@ -15,4 +16,4 @@ public:
     bool IsAtPosition(int posX, int posY) const;
 };
 
-#endif // APPLE_H
+#endif

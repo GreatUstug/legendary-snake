@@ -8,6 +8,7 @@ int Apple::GetY() const { return y; }
 void Apple::SetX(int newX) { x = newX; }
 void Apple::SetY(int newY) { y = newY; }
 
-bool Apple::IsAtPosition(int posX, int posY) const {
+bool Apple::IsAtPosition(int posX, int posY) const
+{
     return x == posX && y == posY;
 }

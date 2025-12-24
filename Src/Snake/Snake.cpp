@@ -1,27 +1,11 @@
 #include "Snake.h"
 #include "../../Include/Constants.h"
-#include "../Grid/Grid.h" // »—œ–¿¬À≈ÕÕ€… include
+#include "../SnakePart/SnakePart.h"
+#include "../Grid/Grid.h"
 #include <algorithm>
 
-SnakePart::SnakePart(int x, int y, char dir, char type)
-    : x(x), y(y), dir(dir), type(type) {
-}
-
-int SnakePart::GetX() const { return x; }
-int SnakePart::GetY() const { return y; }
-char SnakePart::GetDir() const { return dir; }
-char SnakePart::GetType() const { return type; }
-
-void SnakePart::SetX(int newX) { x = newX; }
-void SnakePart::SetY(int newY) { y = newY; }
-void SnakePart::SetDir(char newDir) { dir = newDir; }
-void SnakePart::SetType(char newType) { type = newType; }
-
-bool SnakePart::IsAtPosition(int posX, int posY) const {
-    return x == posX && y == posY;
-}
-
-Snake::Snake() : currentDirection(UP), shouldGrow(false) {
+Snake::Snake() : currentDirection(UP), shouldGrow(false) 
+{
     Spawn();
 }
 
@@ -40,18 +24,21 @@ void Snake::ChangeDirection(char newDir) {
     if ((newDir == UP && currentDirection != DOWN) ||
         (newDir == DOWN && currentDirection != UP) ||
         (newDir == LEFT && currentDirection != RIGHT) ||
-        (newDir == RIGHT && currentDirection != LEFT)) {
+        (newDir == RIGHT && currentDirection != LEFT)) 
+    {
         currentDirection = newDir;
     }
 }
 
-void Snake::Move() {
+void Snake::Move() 
+{
     if (body.empty()) return;
 
     SnakePart head = body.front();
     SnakePart newHead = head;
 
-    switch (currentDirection) {
+    switch (currentDirection) 
+    {
     case UP: newHead.SetY(head.GetY() - 1); break;
     case DOWN: newHead.SetY(head.GetY() + 1); break;
     case LEFT: newHead.SetX(head.GetX() - 1); break;
@@ -65,30 +52,37 @@ void Snake::Move() {
     body.front().SetType(SNAKE_BODY_CHAR);
     body.push_front(newHead);
 
-    if (!shouldGrow) {
+    if (!shouldGrow) 
+    {
         body.pop_back();
     }
-    else {
+    else 
+    {
         shouldGrow = false;
     }
 }
 
-void Snake::Grow() {
+void Snake::Grow() 
+{
     shouldGrow = true;
 }
 
-bool Snake::CheckCollision() const {
+bool Snake::CheckCollision() const 
+{
     if (body.empty()) return true;
 
     const SnakePart& head = body.front();
 
     if (head.GetX() <= 0 || head.GetX() >= COLS_WITH_BORDERS - 1 ||
-        head.GetY() <= 0 || head.GetY() >= ROWS_WITH_BORDERS - 1) {
+        head.GetY() <= 0 || head.GetY() >= ROWS_WITH_BORDERS - 1) 
+    {
         return true;
     }
 
-    for (size_t i = 1; i < body.size(); i++) {
-        if (body[i].GetX() == head.GetX() && body[i].GetY() == head.GetY()) {
+    for (size_t i = 1; i < body.size(); i++) 
+    {
+        if (body[i].GetX() == head.GetX() && body[i].GetY() == head.GetY()) 
+        {
             return true;
         }
     }
@@ -96,30 +90,37 @@ bool Snake::CheckCollision() const {
     return false;
 }
 
-bool Snake::CheckAppleEaten(int appleX, int appleY) const {
+bool Snake::CheckAppleEaten(int appleX, int appleY) const 
+{
     if (body.empty()) return false;
     const SnakePart& head = body.front();
     return (head.GetX() == appleX && head.GetY() == appleY);
 }
 
-const std::deque<SnakePart>& Snake::GetBody() const {
+const std::deque<SnakePart>& Snake::GetBody() const 
+{
     return body;
 }
 
-size_t Snake::GetLength() const {
+size_t Snake::GetLength() const 
+{
     return body.size();
 }
 
-char Snake::GetDirection() const {
+char Snake::GetDirection() const 
+{
     return currentDirection;
 }
 
-const SnakePart& Snake::GetHead() const {
+const SnakePart& Snake::GetHead() const 
+{
     return body.front();
 }
 
-void Snake::DrawOnGrid(GameGrid& grid) const {
-    for (const auto& part : body) {
+void Snake::DrawOnGrid(GameGrid& grid) const 
+{
+    for (const auto& part : body) 
+    {
         grid.SetCell(part.GetX(), part.GetY(), part.GetType());
     }
 }

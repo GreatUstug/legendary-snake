@@ -2,29 +2,14 @@
 #define GAME_H
 
 #include <chrono>
-#include <random>
 #include "../Snake/Snake.h"
 #include "../Apple/Apple.h"
 #include "../Grid/Grid.h"
+#include "../AppleGenerator/AppleGenerator.h"
+#include "../InputHandler/InputHandler.h"
 
-class AppleGenerator {
-private:
-    std::random_device rd;
-    std::mt19937 gen;
-    std::uniform_int_distribution<> xDist;
-    std::uniform_int_distribution<> yDist;
-
-public:
-    AppleGenerator();
-    Apple Spawn(const Snake& snake);
-};
-
-class InputHandler {
-public:
-    static char GetInput(char currentDirection);
-};
-
-class Game {
+class Game 
+{
 private:
     Snake snake;
     Apple apple;
@@ -51,4 +36,4 @@ private:
     static bool IsSizeGridValid();
 };
 
-#endif // GAME_H
+#endif

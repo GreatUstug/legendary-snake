@@ -2,31 +2,11 @@
 #define SNAKE_H
 
 #include <deque>
-#include <vector>
+#include "../SnakePart/SnakePart.h"
+#include "../Grid/Grid.h"
 
-class GameGrid; // Предварительное объявление
-
-class SnakePart {
-private:
-    int x;
-    int y;
-    char dir;
-    char type;
-
-public:
-    SnakePart(int x = 0, int y = 0, char dir = 'w', char type = '+');
-    int GetX() const;
-    int GetY() const;
-    char GetDir() const;
-    char GetType() const;
-    void SetX(int newX);
-    void SetY(int newY);
-    void SetDir(char newDir);
-    void SetType(char newType);
-    bool IsAtPosition(int posX, int posY) const;
-};
-
-class Snake {
+class Snake
+{
 private:
     std::deque<SnakePart> body;
     char currentDirection;
@@ -45,8 +25,7 @@ public:
     char GetDirection() const;
     const SnakePart& GetHead() const;
 
-    // Изменено: принимает неконстантную ссылку на GameGrid
-    void DrawOnGrid(class GameGrid& grid) const;
+    void DrawOnGrid(GameGrid& grid) const;
 };
 
-#endif // SNAKE_H
+#endif

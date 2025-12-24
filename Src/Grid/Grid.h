@@ -2,9 +2,9 @@
 #define GRID_H
 
 #include <vector>
-#include <string>
 
-class GameGrid {
+class GameGrid
+{
 private:
     std::vector<std::vector<char>> grid;
 
@@ -16,9 +16,8 @@ public:
     char GetCell(int x, int y) const;
     void Print() const;
 
-    // Добавляем два метода для доступа к сетке
-    const std::vector<std::vector<char>>& GetGrid() const; // Константная версия
-    std::vector<std::vector<char>>& GetGrid(); // Неконстантная версия
+    const std::vector<std::vector<char>>& GetGrid() const;
+    std::vector<std::vector<char>>& GetGrid();
 };
 
-#endif // GRID_H
+#endif
